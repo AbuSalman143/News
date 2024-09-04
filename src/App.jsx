@@ -8,24 +8,25 @@ import NewsHeadding from './NewsHeadding';
 import Footer from './Components/Footer';
 
 const App = () => {
-  const [newsData, setNwesData] = useState([]);
+  const [newsData, setNewsData] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [newsType, setNewsType] = useState("india");
-  const [toggelLaddingComponet, setToggelLandingComponent] = useState(true);
+  const [toggleLandingComponent, setToggleLandingComponent] = useState(true);
 
   const apiKey = "96a81111dfac4400ad4de608d0734f35";
-  let url = `https://newsapi.org/v2/everything?q`;
 
   async function newsApi() {
-   try{
-    let response = await fetch(`https://newsapi.org/v2/everything?q=${newsType}&apiKey=${apiKey}`);
-    let data = await response.json();
-    setNwesData(data.articles);
-   }
-   catch(err){
-    console.log(err);
-    
-   }
+    try {
+      let response = await fetch(`https://newsapi.org/v2/everything?q=${newsType}&apiKey=${apiKey}`);
+      let data = await response.json();
+      if (data && data.articles) {
+        setNewsData(data.articles);
+      } else {
+        console.error("No articles found");
+      }
+    } catch (err) {
+      console.error("Error fetching news data", err);
+    }
   }
 
   useEffect(() => {
@@ -34,7 +35,7 @@ const App = () => {
 
   const changeNews = (input) => {
     input ? setNewsType(input) : setNewsType("india");
-    setToggelLandingComponent(false);
+    setToggleLandingComponent(false);
   }
 
   const searchInput = (input) => {
@@ -43,11 +44,11 @@ const App = () => {
 
   return (
     <div className='flex flex-col justify-center w-full px-4 sm:px-6 md:px-10 lg:px-20'>
-      <Header setToggelLandingComponent={setToggelLandingComponent} changeNews={changeNews} />
+      <Header setToggleLandingComponent={setToggleLandingComponent} changeNews={changeNews} />
       
-      {!toggelLaddingComponet && <NewsHeadding newsType={newsType} />}
+      {!toggleLandingComponent && <NewsHeadding newsType={newsType} />}
       
-      {toggelLaddingComponet && (
+      {toggleLandingComponent && (
         <>
           <LandingNewsSection newsData={newsData} />
           <BreakingNews newsData={newsData} />
@@ -55,12 +56,14 @@ const App = () => {
         </>
       )}
 
-      <div className={`flex flex-wrap gap-6 sm:gap-10 md:gap-16 lg:gap-20 w-full justify-center mt-12`}>
-        {newsData.map((item, index) => (
-          <NewsCards newsData={item} key={index} />
-        ))}
-      </div>
-      
+      {newsData && newsData.length > 0 && (
+        <div className={`flex flex-wrap gap-6 sm:gap-10 md:gap-16 lg:gap-20 w-full justify-center mt-12`}>
+          {newsData.map((item, index) => (
+            <NewsCards newsData={item} key={index} />
+          ))}
+        </div>
+      )}
+
       <Footer />
     </div>
   );
