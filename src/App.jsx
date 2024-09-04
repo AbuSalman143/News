@@ -18,16 +18,20 @@ const App = () => {
   async function newsApi() {
     try {
       let response = await fetch(`https://newsapi.org/v2/everything?q=${newsType}&apiKey=${apiKey}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       let data = await response.json();
       if (data && data.articles) {
         setNewsData(data.articles);
       } else {
-        console.error("No articles found");
+        console.error("No articles found in response data");
       }
     } catch (err) {
       console.error("Error fetching news data", err);
     }
   }
+  
 
   useEffect(() => {
     newsApi();
