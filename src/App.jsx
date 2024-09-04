@@ -17,9 +17,15 @@ const App = () => {
   let url = `https://newsapi.org/v2/everything?q`;
 
   async function newsApi() {
+   try{
     let response = await fetch(`https://newsapi.org/v2/everything?q=${newsType}&apiKey=${apiKey}`);
     let data = await response.json();
     setNwesData(data.articles);
+   }
+   catch(err){
+    console.log(err);
+    
+   }
   }
 
   useEffect(() => {
