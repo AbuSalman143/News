@@ -35,7 +35,7 @@ const App = () => {
 
   useEffect(() => {
     newsApi();
-  }, [newsType]);
+  });
 
   const changeNews = (input) => {
     input ? setNewsType(input) : setNewsType("india");
